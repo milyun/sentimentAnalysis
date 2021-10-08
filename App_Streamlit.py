@@ -78,14 +78,15 @@ def main():
             #time.sleep(0.1)
             #my_bar.progress(i)
             df.loc[i,"Date"] = tweet.created_at
+            df.loc[i,"Date"] = df.loc[i,"Date"].replace(tzinfo=None)
             df.loc[i,"User"] = tweet.user.name
             df.loc[i,"IsVerified"] = tweet.user.verified
             df.loc[i,"Tweet"] = tweet.text
             df.loc[i,"Likes"] = tweet.favorite_count
             df.loc[i,"RT"] = tweet.retweet_count
             df.loc[i,"User_location"] = tweet.user.location
-            #df.to_csv("TweetDataset.csv",index=False)
-            #df.to_excel('{}.xlsx'.format("TweetDataset"),index=False)   ## Save as Excel
+            df.to_csv("TweetDataset.csv",index=False)
+            df.to_excel('{}.xlsx'.format("TweetDataset"),index=False)   ## Save as Excel
             i=i+1
             if i>Count:
                 break
@@ -136,9 +137,7 @@ def main():
         st.success('Tweet telah Diekstraksi !!!!')    
            
     
-        # Call function to get Clean tweets
-        df['clean_tweet'] = df['Tweet'].apply(lambda x : clean_tweet(x))
-    
+       
         # Call function to get the Sentiments
         df["Sentiment"] = df["Tweet"].apply(lambda x : analyze_sentiment(x))
         
@@ -149,11 +148,14 @@ def main():
         st.write("Total Negative Tweets adalah : {}".format(len(df[df["Sentiment"]=="Negative"])))
         st.write("Total Neutral Tweets adalah : {}".format(len(df[df["Sentiment"]=="Neutral"])))
         
+         # Call function to get Clean tweets
+        df['clean_tweet'] = df['Tweet'].apply(lambda x : clean_tweet(x))
+    
         # See the Extracted Data : 
         if st.button("Lihat Data yang Diekstrak"):
             #st.markdown(html_temp, unsafe_allow_html=True)
             st.success("Di bawah ini adalah Data yang Diekstrak :")
-            st.write(df.head(50))
+            st.write(df.head(10))
         
         
         # get the countPlot
