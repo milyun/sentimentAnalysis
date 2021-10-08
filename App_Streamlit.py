@@ -73,21 +73,24 @@ def main():
     # Write a Function to extract tweets:
     def get_tweets(Topic,Count):
         i=0
-	for tweet in tweepy.Cursor(api.search_tweets,q=Topic,lang="id",count=Count).items(250):
-		df.loc[i,"Date"] = tweet.created_at
-		df.loc[i,"User"] = tweet.user.name
-		df.loc[i,"IsVerified"] = tweet.user.verified
-		df.loc[i,"Tweet"] = tweet.text
-		df.loc[i,"Likes"] = tweet.favorite_count
-		df.loc[i,"RT"] = tweet.retweet_count
-		df.loc[i,"User_location"] = tweet.user.location
-		#df.to_csv("TweetDataset.csv",index=False)
-		#df.to_excel('{}.xlsx'.format("TweetDataset"),index=False)   ## Save as Excel
-		i=i+1
-		if i>Count:
-			break
-		else:
-			pass
+        #my_bar = st.progress(100) # To track progress of Extracted tweets
+        for tweet in tweepy.Cursor(api.search_tweets,q=Topic,lang="id",count=Count).items(250):
+            #time.sleep(0.1)
+            #my_bar.progress(i)
+            df.loc[i,"Date"] = tweet.created_at
+            df.loc[i,"User"] = tweet.user.name
+            df.loc[i,"IsVerified"] = tweet.user.verified
+            df.loc[i,"Tweet"] = tweet.text
+            df.loc[i,"Likes"] = tweet.favorite_count
+            df.loc[i,"RT"] = tweet.retweet_count
+            df.loc[i,"User_location"] = tweet.user.location
+            #df.to_csv("TweetDataset.csv",index=False)
+            #df.to_excel('{}.xlsx'.format("TweetDataset"),index=False)   ## Save as Excel
+            i=i+1
+            if i>Count:
+                break
+            else:
+                pass
     # Function to Clean the Tweet.
     def clean_tweet(tweet):
         return ' '.join(re.sub('(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|([RT])', ' ', tweet.lower()).split())
